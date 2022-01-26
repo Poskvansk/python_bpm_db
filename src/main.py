@@ -15,9 +15,9 @@ def menu():
         print("6 - Remover Pool")
 
         print("8 - Alterar tarefa")
-        print("9 - Sair")
-    
-        print("\ncheck - Check DB")
+        
+        print("\n0 - Sair")
+        print("check - Check DB")
         print("drop - Drop DB")
         print("init - Init DB")
         print("-------------------------------------")
@@ -64,7 +64,7 @@ def menu():
             dblogic.clear_screen()
             dblogic.update_tarefa()
 
-        elif(opt == '9'):
+        elif(opt == '0'):
             quit = True
         
         else:

@@ -69,44 +69,41 @@ def create_tables():
 
 
 
-def create_relations() :
+# def create_relations() :
 
-    cur.execute( """ CREATE TABLE IF NOT EXISTS next_task (
+#     cur.execute( """ CREATE TABLE IF NOT EXISTS next_task (
 
-                    id_current INT NOT NULL,
-                    id_next INT NOT NULL,
-
-
-                    next_task INT NOT NULL,
-                        FOREIGN KEY (id_current)
-                            REFERENCES Tarefa (id)
-                        FOREIGN KEY (id_next)
-                            REFERENCES Tarefa (id)
-
-                    PRIMARY KEY(id_current, id_next)
-    );""")
-
-    cur.execute( """ CREATE TABLE IF NOT EXISTS next_task_conditional (
-
-                    id_current INT NOT NULL,
-                    id_next_if INT NOT NULL,
-                    id_next_else INT NOT NULL,
+#                     id_current INT NOT NULL,
+#                     id_next INT NOT NULL,
 
 
-                    next_task INT NOT NULL,
-                        FOREIGN KEY (id_current)
-                            REFERENCES Tarefa (id)
-                        FOREIGN KEY (id_next_if)
-                            REFERENCES Tarefa (id)
-                        FOREIGN KEY (id_next_else)
-                            REFERENCES Tarefa (id)
+#                     next_task INT NOT NULL,
+#                         FOREIGN KEY (id_current)
+#                             REFERENCES Tarefa (id)
+#                         FOREIGN KEY (id_next)
+#                             REFERENCES Tarefa (id)
 
-                    PRIMARY KEY(id_current, id_next_if, id_next_else)
-    );""")
+#                     PRIMARY KEY(id_current, id_next)
+#     );""")
+
+#     cur.execute( """ CREATE TABLE IF NOT EXISTS next_task_conditional (
+
+#                     id_current INT NOT NULL,
+#                     id_next_if INT NOT NULL,
+#                     id_next_else INT NOT NULL,
 
 
+#                     next_task INT NOT NULL,
+#                         FOREIGN KEY (id_current)
+#                             REFERENCES Tarefa (id)
+#                         FOREIGN KEY (id_next_if)
+#                             REFERENCES Tarefa (id)
+#                         FOREIGN KEY (id_next_else)
+#                             REFERENCES Tarefa (id)
 
-    return
+#                     PRIMARY KEY(id_current, id_next_if, id_next_else)
+#     );""")
+
 
 con = sqlite3.connect("bpm.db")
 cur = con.cursor()
