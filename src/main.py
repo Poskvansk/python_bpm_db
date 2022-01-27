@@ -17,6 +17,7 @@ def menu():
         print("8 - Alterar tarefa")
         
         print("\n0 - Sair")
+        print("check - Run")
         print("check - Check DB")
         print("drop - Drop DB")
         print("init - Init DB")
@@ -59,6 +60,10 @@ def menu():
         elif(opt == 'check'):
             dblogic.clear_screen()
             dblogic.check()
+        
+        elif(opt == 'run'):
+            dblogic.clear_screen()
+            dblogic.run_process()
         
         elif(opt == '8'):
             dblogic.clear_screen()

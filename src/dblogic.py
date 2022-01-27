@@ -7,6 +7,73 @@ def clear_screen():
 
 
 ##############    LOGICA PROCESSO
+def get_task_type(task_name):
+
+    cur.execute("SELECT type FROM Tarefa WHERE name = '" + task_name + "';")
+    type = cur.fetchall()
+
+    return type[0][0]
+
+def execute_final_task(current_task):
+    print('\n')
+    print("Executando tarefa "+ current_task +" do tipo Final")
+    
+    print("\nPROCESSO FINALIZADO!")
+
+def execute_condit_task(current_task):
+
+    print('\n')
+    print("Executando tarefa "+ current_task +" do tipo Condicional.")
+    opt = input("Qual condição foi cumprida? (1 ou 2) ")
+
+    if(opt =='1'):
+        cur.execute("SELECT next_task1 FROM Tarefa_condicional WHERE name = '" + current_task + "';")
+
+    else:
+        cur.execute("SELECT next_task2 FROM Tarefa_condicional WHERE name = '" + current_task + "';")
+
+    current_task = cur.fetchall()
+
+    return current_task[0][0]
+
+def execute_normal_task(current_task, type):
+
+    print('\n')
+    print("Executando tarefa "+ current_task +" do tipo "+ type)
+
+    cur.execute("SELECT next_task FROM Tarefa_" + type + " WHERE name = '" + current_task + "';")
+
+    current_task = cur.fetchall()
+    
+    return current_task[0][0]
+
+def run_task_order(tasks):
+
+    for tsk in tasks:
+
+        type = get_task_type(tsk)
+
+        if(type == "inicial"):
+            current_task = tsk
+            break
+
+    while(type != 'final'):
+
+        type = get_task_type(current_task)
+
+        if(type == "condicional"):
+            current_task = execute_condit_task(current_task)
+        
+        elif(type == "final"):
+            execute_final_task(current_task)
+
+        else:
+            current_task = execute_normal_task(current_task, type)
+
+        input("Pressione ENTER para continuar ")
+
+
+
 
 def run_process():
 
@@ -23,14 +90,26 @@ def run_process():
 
     if(opt <= len(processos)):
         opt-=1
-        qtd_pools = 0
-        qtd_tarefas = 0
-        print("O processo " + processos[opt][0] + " tem: ")
+        cur.execute("SELECT * FROM Pool WHERE Processo ='" + processos[opt][0] + "';")
+        pools = cur.fetchall()
+        qtd_pools = len(pools)
 
 
-    proc_name = input("Qual ")
+        
+        query = "SELECT * FROM Tarefa WHERE Pool IN ("
+        for i in range(qtd_pools):
+            query+= "'" + pools[i][0] + "'"
+            if(i < qtd_pools-1):
+                query+= ", "
+        query += ");"
 
-    return
+        cur.execute(query)
+        tarefas = cur.fetchall()
+        tarefas = [x[0] for x in tarefas]
+        qtd_tarefas = len(tarefas)
+        print("O processo " + processos[opt][0] + " tem: " + str(qtd_pools) + " Pools e " + str(qtd_tarefas) + " Tarefas")
+
+        run_task_order(tarefas)
 
 def add_processo():
 
@@ -89,10 +168,7 @@ def add_tarefa():
 def remove_tarefa():
 
     task_name = input("Nome da tarefa? ")
-
-    cur.execute("SELECT type FROM Tarefa WHERE name = '{}';".format(task_name))
-    type = cur.fetchall()
-    type = type[0][0]
+    type = get_task_type(task_name)
 
     cur.execute("DELETE FROM Tarefa_{} WHERE name = '{}';".format(type, task_name))
     cur.execute("DELETE FROM Tarefa WHERE name = '{}';".format(task_name))
@@ -186,7 +262,7 @@ def add_pool():
 def remove_pool():
 
     pool_name = input("Nome da pool? ")
-    cur.execute(" UPDATE Tarefa SET Pool = NULL WHERE Pool = '" + pool_name +"'; ")
+    cur.execute(" UPDATE Tarefa SET Pool = NULL WHERE Pool = '" + pool_name +"';")
     cur.execute("DELETE FROM Pool WHERE name = '"+ pool_name +"';")
     con.commit()
 
@@ -197,13 +273,12 @@ def remove_pool():
 def remove_tables():
 
     print("DROP ALL TABLES")
-    cur.execute("DROP TABLE IF EXISTS Processo;")
-    cur.execute("DROP TABLE IF EXISTS Pool;")
-    cur.execute("DROP TABLE IF EXISTS Tarefa;")
-    cur.execute("DROP TABLE IF EXISTS Tarefa_normal;")
-    cur.execute("DROP TABLE IF EXISTS Tarefa_inicial;")
-    cur.execute("DROP TABLE IF EXISTS Tarefa_final;")
-    cur.execute("DROP TABLE IF EXISTS Tarefa_condicional;")
+
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    res = cur.fetchall()
+
+    for tables in res:
+        cur.execute("DROP TABLE IF EXISTS " + tables[0])
 
     input()
     clear_screen()
