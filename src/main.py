@@ -17,7 +17,7 @@ def menu():
         print("8 - Alterar tarefa")
         
         print("\n0 - Sair")
-        print("check - Run")
+        print("run - Run")
         print("check - Check DB")
         print("drop - Drop DB")
         print("init - Init DB")
